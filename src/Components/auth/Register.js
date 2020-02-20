@@ -19,7 +19,8 @@ class Register extends Component {
         errors:[],
         loading:false,
         usersRef: firebase.database().ref("users"),
-        admin:false
+        admin:false,
+        moderator:false
     }
 
     isFormValid =() => {
@@ -80,7 +81,9 @@ class Register extends Component {
                   photoURL: `http://gravatar.com/avatar/${md5(
                       createdUser.user.email
                   )}?d=identicon`,
-                  admin:this.state.admin
+                  admin:this.state.admin,
+                  moderator: this.state.moderator
+
                 })
                 .then(() => {
                   this.saveUser(createdUser).then(() => {
@@ -109,7 +112,8 @@ class Register extends Component {
         return this.state.usersRef.child(createdUser.user.uid).set({
             name: createdUser.user.displayName,
             avatar: createdUser.user.photoURL,
-            admin:this.state.admin
+            admin:this.state.admin,
+            moderator:this.state.moderator
         })
     }
     

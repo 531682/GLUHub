@@ -11,6 +11,7 @@ class UserPanel extends React.Component {
     modal: false,
     usersRef: firebase.database().ref("users"),
     admin: false,
+    moderator: false,
     lmao: false,
     git: false,
     uploadedCroppedImage: "",
@@ -170,7 +171,7 @@ class UserPanel extends React.Component {
               />
             </Header>
           </Grid.Row>
-          <Modal open={modal} onClose={this.closeModal} basic closeIcon>
+          <Modal open={modal} onClose={this.closeModal} closeIcon>
             <Modal.Header>
               Settings for{" "}
               {user.displayName}
@@ -210,7 +211,7 @@ class UserPanel extends React.Component {
               </Modal.Description>
             </Modal.Content>
           </Modal>
-          <Modal basic open={lmao} onClose={this.closeLmao}>
+          <Modal open={lmao} onClose={this.closeLmao}>
             <Modal.Header>Change Avatar</Modal.Header>
             <Modal.Content>
               <Input

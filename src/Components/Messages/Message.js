@@ -5,7 +5,7 @@ import firebase from '../../firebase'
 const Message= ({message, user}) => {
     const [showModal, setModal] = useState(false)
     const [showConfirm, setConfirm] = useState(false)
-
+    const [showAdmin, setAdmin] = useState(false)
     const isOwnMessage = (message, user) =>{
         return message.user.id === user.uid ? "message__self" : ""
     }
@@ -38,6 +38,28 @@ const Message= ({message, user}) => {
       })
     }
 
+    const makeModerator = (message, user) =>{
+      firebase.database().ref("users/" + message.user.id +"/moderator").on("value", snap=>{
+        if(snap.val() === false){
+          return null
+        } else{
+          firebase
+          .database()
+          .ref("users/" + message.user.id + "/moderator")
+          .on("value", snap =>{
+            if(snap.val() === true){
+              console.log('You are already Moderator!')
+            }else{
+              firebase.database().ref("users/" + message.user.id).set({
+                moderator:true
+              }) 
+              console.log(snap)
+            }
+          })
+        }
+      })
+    }
+
     return (
         <div>
             <Comment>
@@ -52,28 +74,41 @@ const Message= ({message, user}) => {
                     )}
                 </Comment.Content>
             </Comment>
-            <Modal open={showModal} basic closeIcon onClose={() => setModal(false)}>
+            <Modal open={showModal} closeIcon onClose={() => setModal(false)}>
                 <Modal.Header>
                   {message.user.name}
                 </Modal.Header>
                 <Modal.Content image>
                   <Image wrapped small size="small" src={message.user.avatar}/>  
                   <Modal.Description>
-                      <Button onClick={()=> setConfirm(true)}>Make user moderator</Button>
+                      <Button onClick={()=> setConfirm(true)}>Make user Moderator</Button>
+                      {/* <Button onClick={()=> setAdmin(true)}>Make user Admin</Button> */}
                   </Modal.Description>
                 </Modal.Content>
             </Modal>
             <Modal open={showConfirm} closeIcon size="mini" onClose ={()=> setConfirm(false)}>
               <Modal.Header>
-                Make {message.user.name} admin
+                Make {message.user.name} moderator
               </Modal.Header>
               <Modal.Content>
-                <p>Are you?</p>
+                <p>Are you sure?</p>
               </Modal.Content>
               <Modal.Actions>
                 <Button onClick={()=> setConfirm(false)}negative>No</Button>
-                <Button onClick={() => makeAdmin(message, user)} positive icon="checkmark" labelPosition="right" content="Yes"/>
+                <Button onClick={() => makeModerator(message, user)} positive icon="checkmark" labelPosition="right" content="Yes"/>
               </Modal.Actions>
+            {/* </Modal>
+            <Modal open={showAdmin} closeIcon onClose={() => setAdmin(false)}>
+              <Modal.Header>
+                Make {message.user.name} admin? 
+              </Modal.Header>
+              <Modal.Content>
+                Are you sure?
+              </Modal.Content>
+              <Modal.Actions>
+                <Button onClick={() => setAdmin(false)} negative>No</Button>
+                <Button onClick={() => makeAdmin(message, user)} positive icon="checkmark" labelPosition="right" content="Yes"/>
+              </Modal.Actions> */}
             </Modal>
         </div>
     )
