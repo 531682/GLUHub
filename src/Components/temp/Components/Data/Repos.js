@@ -10,14 +10,16 @@ class Repos extends React.Component{
     state ={
         response:[],
         user: firebase.auth().currentUser,
-        repositories:[]
+        repositories:[],
+        gitLogin: ''
     }
 
-
-
-
     componentDidMount(){
+        this.state.gitLogin = '531682';
         this.fetchRepos()
+        console.log(this.state.user);
+
+        
     }
 
     
@@ -31,15 +33,16 @@ class Repos extends React.Component{
 
     fetchRepos = () => {
         axios
-          .get(`https://api.github.com/users/${this.state.user.displayName}/repos`)
-          .then(response => {
+        .get(`https://api.github.com/users/${this.state.gitLogin}/repos`)
+        .then(response => {
             this.setState({
-              repositories: response.data
+                repositories: response.data
             });
             if (this.state.repositories.length) {
-              console.log(this.state.repositories.length);
+                console.log(this.state.repositories.length);
             }
             console.log(this.state.repositories)
+            console.log(this.state.user);
           });
       };  
 
